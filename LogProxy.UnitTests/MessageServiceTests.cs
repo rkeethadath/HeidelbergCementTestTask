@@ -31,7 +31,7 @@ namespace LogProxy.UnitTests
         }
 
         [Fact]
-        public async Task Given_Messages_PostMessagesAsync_Should_Add()
+        public async Task Given_Messages_PostMessagesAsync_Should_Save_Messages()
         {
             // Arrange
             var messageService = new MessageService(httpClient);

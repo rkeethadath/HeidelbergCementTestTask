@@ -14,11 +14,12 @@ namespace LogProxy.Api
     {
         private readonly HttpClient httpClient;
         private const string MessageUri = "https://api.airtable.com/v0/appD1b1YjWoXkUJwR/Messages";
+        private const string AuthenticationKey = "key46INqjpp7lMzjd";
 
         public MessageService(HttpClient httpClient)
         {
             this.httpClient = httpClient;
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "key46INqjpp7lMzjd");
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AuthenticationKey);
         }
 
         public async Task<List<MessageDto>> GetMessagesAsync()
