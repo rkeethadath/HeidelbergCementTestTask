@@ -1,4 +1,5 @@
 using LogProxy.Api.Models;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -12,19 +13,19 @@ namespace LogProxy.Api
 {
     public class MessageService : IMessageService
     {
-        private readonly HttpClient httpClient;
-        private const string MessageUri = "https://api.airtable.com/v0/appD1b1YjWoXkUJwR/Messages";
-        private const string AuthenticationKey = "key46INqjpp7lMzjd";
+        private readonly HttpClient _httpClient;
+        private readonly string _messageUri;
 
-        public MessageService(HttpClient httpClient)
+        public MessageService(HttpClient httpClient, IConfiguration configuration)
         {
-            this.httpClient = httpClient;
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AuthenticationKey);
+            _messageUri = configuration.GetValue<string>("MessagesApiUrl");
+            var authenticationKey = configuration.GetValue<string>("MessagesApiKey");
+            this._httpClient = GetHttpClient(httpClient, authenticationKey);            
         }
 
         public async Task<List<MessageDto>> GetMessagesAsync()
         {
-            var response = await httpClient.GetAsync(new Uri(MessageUri));
+            var response = await _httpClient.GetAsync(new Uri(_messageUri));
             var messageData = JsonConvert.DeserializeObject<MessageData>(
                 await response.Content.ReadAsStringAsync());
 
@@ -37,8 +38,8 @@ namespace LogProxy.Api
 
             FillMissingFields(messages);
 
-            var response = await httpClient.PostAsync(
-                new Uri(MessageUri),
+            var response = await _httpClient.PostAsync(
+                new Uri(_messageUri),
                 GetHttpContent(messages));
 
             var messageData = JsonConvert.DeserializeObject<MessageData>(
@@ -55,7 +56,6 @@ namespace LogProxy.Api
                 m.ReceivedAt = DateTime.Now;
             });
         }
-
         private HttpContent GetHttpContent(List<MessageDto> messages)
         {
             return new StringContent(
@@ -111,6 +111,12 @@ namespace LogProxy.Api
                 Text = recordData?.FieldData?.Message,
                 ReceivedAt = recordData?.FieldData?.ReceivedAt
             };
+        }
+
+        private HttpClient GetHttpClient(HttpClient httpClient, string authenticationKey)
+        {
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authenticationKey);
+            return httpClient;
         }
     }
 }

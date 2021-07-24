@@ -1,5 +1,6 @@
 using LogProxy.Api;
 using LogProxy.Api.Models;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -10,18 +11,20 @@ namespace LogProxy.UnitTests
 {
     public class MessageServiceTests
     {
-        private readonly HttpClient httpClient;
-        
+        private readonly HttpClient _httpClient;
+        private readonly IConfiguration _configuration;
+
         public MessageServiceTests()
         {
-            httpClient = Helper.GetHttpClient();
+            _httpClient = Helper.GetHttpClient();
+            _configuration = Helper.GetConfiguration();
         }
 
         [Fact]
         public async Task Ensure_That_GetMessagesAsync_Returns_All_Messages()
         {
             // Arrange
-            var messageService = new MessageService(httpClient);
+            var messageService = new MessageService(_httpClient, _configuration);
 
             // Act
             var actual = await messageService.GetMessagesAsync();
@@ -34,7 +37,7 @@ namespace LogProxy.UnitTests
         public async Task Given_Messages_PostMessagesAsync_Should_Save_Messages()
         {
             // Arrange
-            var messageService = new MessageService(httpClient);
+            var messageService = new MessageService(_httpClient, _configuration);
 
             // Act
             var actual = await messageService.PostMessagesAsync(Helper.GetTestDataRequest());

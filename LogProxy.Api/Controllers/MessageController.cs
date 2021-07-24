@@ -1,6 +1,5 @@
 ﻿using LogProxy.Api.Authentication;
 using LogProxy.Api.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;

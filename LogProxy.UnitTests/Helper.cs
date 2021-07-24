@@ -1,4 +1,5 @@
 ﻿using LogProxy.Api.Models;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using Moq.Protected;
 using System;
@@ -29,6 +30,20 @@ namespace LogProxy.UnitTests
                 .ReturnsAsync(httpResponse);
             return new HttpClient(mockHandler.Object);
         }
+
+        internal static IConfiguration GetConfiguration()
+        {
+            return new ConfigurationBuilder()
+                .AddInMemoryCollection(new Dictionary<string, string>
+                {
+                    { "UserId", "user_id" },
+                    { "Password", "password" },
+                    { "MessagesApiUrl", "https://api.domain.com" },
+                    { "MessagesApiKey", "api_key" },
+                })
+                .Build();
+        }
+
         public static string GetMessagesTestData()
         {
             var messagesTestData = File.ReadAllText("MessagesTestData.json");
