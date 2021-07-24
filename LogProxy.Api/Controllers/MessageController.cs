@@ -1,4 +1,5 @@
-﻿using LogProxy.Api.Models;
+﻿using LogProxy.Api.Authentication;
+using LogProxy.Api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -6,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace LogProxy.Api.Controllers
 {
-    [Authorize]
+    [BasicAuthorization]
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class MessageController : ControllerBase
     {
         private readonly IMessageService _messageService;
